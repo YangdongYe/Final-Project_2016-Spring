@@ -1,6 +1,8 @@
 var m = {t:50,r:100,b:50,l:100},
     w = d3.select('#plot').node().clientWidth,
-    h = d3.select('#plot').node().clientHeight;
+    h = d3.select('#plot').node().clientHeight,
+    color10 = d3.scale.category10(),
+    color20 = d3.scale.category20();
 
 var plot = d3.select('.plot').append('svg')
     .attr('width',w+ m.l+ m.r)
@@ -18,8 +20,23 @@ var queue = d3_queue.queue()
         console.log(fundingRounds);
         console.log(currencyEx);
         
+        //Exchange
+        var valueH = [];
+        for (var i=0;i<fundingRounds.length;i++){
+            
+            if (fundingRounds[i].currencyID == 'USD') {valueH[i] = fundingRounds[i].raisedAmount;};
+            if (fundingRounds[i].currencyID == 'JPY') {valueH[i] = fundingRounds[i].raisedAmount / (currencyEx[fundingRounds[i].fundingYear-1993].JPYEx);};
+            if (fundingRounds[i].currencyID == 'SEK') {valueH[i] = fundingRounds[i].raisedAmount / (currencyEx[fundingRounds[i].fundingYear-1993].SEKEx);};
+            if (fundingRounds[i].currencyID == 'GBP') {valueH[i] = fundingRounds[i].raisedAmount / (currencyEx[fundingRounds[i].fundingYear-1993].GBPEx);};
+            if (fundingRounds[i].currencyID == 'EUR') {valueH[i] = fundingRounds[i].raisedAmount / (currencyEx[fundingRounds[i].fundingYear-1993].EUREx);};
+            if (fundingRounds[i].currencyID == 'NIS') {valueH[i] = fundingRounds[i].raisedAmount / (currencyEx[fundingRounds[i].fundingYear-1993].NISEx);};
+            if (fundingRounds[i].currencyID == 'CAD') {valueH[i] = fundingRounds[i].raisedAmount / (currencyEx[fundingRounds[i].fundingYear-1993].CADEx);};
+            
+            valueH[i] = valueH[i] / (currencyEx[fundingRounds[i].fundingYear-1993].usdInflationRate)
+        }
+       
         var scaleX = d3.time.scale().domain([new Date(1993,0,1),new Date(2013,11,31)]).range([0,w]),
-            scaleY = d3.scale.linear().domain([0,d3.max(fundingRounds,function(d){return d.raisedAmount})]).range([h,0]);
+            scaleY = d3.scale.log().domain([d3.min(valueH,function(d){return d}),d3.max(valueH,function(d){return d})]).range([h,0]);
         
         var axisX = d3.svg.axis()
             .orient('bottom')
@@ -39,10 +56,10 @@ var queue = d3_queue.queue()
                     .enter()
                     .append('circle').attr('class','point')
                     .attr('cx',function(d){ return scaleX(d.fundingDate)})
-                    .attr('cy',function(d){ return h - scaleY(d.raisedAmount)})
-                    .attr('r',3)
-                    .style('fill','black')
-                    .style('fill-opacity',.7);
+                    .attr('cy',function(d,i){ return h - scaleY(valueH[i])})
+                    .attr('r',2)
+                    .style('fill',function(d){return color10(d.currencyID);})
+                    .style('fill-opacity',.5);
     })
 
 function parse(d){
@@ -55,6 +72,7 @@ function parse(d){
         currencyID: d.raised_currency_code,
         sourceURL: d.source_url,
         sourceDescription: d.source_description,
+        fundingYear: +d.funded_year,
         fundingDate: parseDate(+d.funded_year, +d.funded_month, +d.funded_day),
         fundCcompanyID: d.companies,
         fundOrganizationID: d.organizations,
@@ -66,13 +84,13 @@ function parse(d){
 function parseEX(d){
     return {
         year: d.YEAR,
-        jpyEx: +d.JPY,
-        sekEx: +d.SEK,
-        gbpEx: +d.GBP,
-        eurEx: +d.EUR,
-        nisEx: +d.NIS,
-        cadEx: +d.CAD,
-        usdEx: +d.USD,
+        JPYEx: +d.JPY,
+        SEKEx: +d.SEK,
+        GBPEx: +d.GBP,
+        EUREx: +d.EUR,
+        NISEx: +d.NIS,
+        CADEx: +d.CAD,
+        USDEx: +d.USD,
         usdInflationRate: +d.USD_inflation
     }
 }
@@ -80,4 +98,3 @@ function parseEX(d){
 function parseDate(year, month, day){
     return new Date(year, month-1, day);
 }
-
