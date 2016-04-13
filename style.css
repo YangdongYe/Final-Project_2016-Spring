@@ -6,3 +6,64 @@
         width:100%;
         height:100%;
     }
+
+/* tooltip */
+.custom-tooltip-fundingRoundsID{
+	padding: 5px;
+	background: rgb(230,230,230);
+	width:200px;
+	height:20px;
+	position: absolute;
+	visibility:hidden;
+}
+
+.custom-tooltip-id{
+	padding: 5px;
+	background: rgb(230,230,230);
+	width:200px;
+	/*height:100%;*/
+	position: absolute;
+	visibility:hidden;
+}
+
+.custom-tooltip-date{
+	padding: 5px;
+	background: rgb(230,230,230);
+	width:200px;
+	height:25px;
+	position: absolute;
+	visibility:hidden;
+}
+
+.custom-tooltip-raisedAmount{
+	padding: 5px;
+	background: rgb(230,230,230);
+	width:200px;
+	height:20px;
+	position: absolute;
+	visibility:hidden;
+}
+
+.custom-tooltip-raisedAmountUSD{
+	padding: 5px;
+	background: rgb(230,230,230);
+	width:200px;
+	height:20px;
+	position: absolute;
+	visibility:hidden;
+}
+
+.custom-tooltip-sourceURL{
+	padding: 5px;
+	background: rgb(230,230,230);
+	width:200px;
+	height:20px;
+	position: absolute;
+	visibility:hidden;
+}
+
+/* fonts */
+h2{
+	font-size:13px;
+	margin: 0 0 5px;
+}

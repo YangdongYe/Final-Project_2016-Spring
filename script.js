@@ -20,23 +20,29 @@ var queue = d3_queue.queue()
         console.log(fundingRounds);
         console.log(currencyEx);
         
+        var scaleX = d3.time.scale().domain([new Date(1993,0,1),new Date(2013,11,31)]).range([0,w]),
+            scaleY = d3.scale.log().domain(d3.extent(fundingRounds,function(d){return d.raisedAmount})).range([h,0]);
+        
         //Exchange
         var valueH = [];
         for (var i=0;i<fundingRounds.length;i++){
             
-            if (fundingRounds[i].currencyID == 'USD') {valueH[i] = fundingRounds[i].raisedAmount;};
-            if (fundingRounds[i].currencyID == 'JPY') {valueH[i] = fundingRounds[i].raisedAmount / (currencyEx[fundingRounds[i].fundingYear-1993].JPYEx);};
-            if (fundingRounds[i].currencyID == 'SEK') {valueH[i] = fundingRounds[i].raisedAmount / (currencyEx[fundingRounds[i].fundingYear-1993].SEKEx);};
-            if (fundingRounds[i].currencyID == 'GBP') {valueH[i] = fundingRounds[i].raisedAmount / (currencyEx[fundingRounds[i].fundingYear-1993].GBPEx);};
-            if (fundingRounds[i].currencyID == 'EUR') {valueH[i] = fundingRounds[i].raisedAmount / (currencyEx[fundingRounds[i].fundingYear-1993].EUREx);};
-            if (fundingRounds[i].currencyID == 'NIS') {valueH[i] = fundingRounds[i].raisedAmount / (currencyEx[fundingRounds[i].fundingYear-1993].NISEx);};
-            if (fundingRounds[i].currencyID == 'CAD') {valueH[i] = fundingRounds[i].raisedAmount / (currencyEx[fundingRounds[i].fundingYear-1993].CADEx);};
+            var di = fundingRounds[i],
+                diKey = fundingRounds[i].fundingYear-1993;
             
-            valueH[i] = valueH[i] / (currencyEx[fundingRounds[i].fundingYear-1993].usdInflationRate)
+            if (di.currencyID == 'USD') {valueH[i] = di.raisedAmount;};
+            if (di.currencyID == 'JPY') {valueH[i] = di.raisedAmount / (currencyEx[diKey].JPYEx);};
+            if (di.currencyID == 'SEK') {valueH[i] = di.raisedAmount / (currencyEx[diKey].SEKEx);};
+            if (di.currencyID == 'GBP') {valueH[i] = di.raisedAmount / (currencyEx[diKey].GBPEx);};
+            if (di.currencyID == 'EUR') {valueH[i] = di.raisedAmount / (currencyEx[diKey].EUREx);};
+            if (di.currencyID == 'NIS') {valueH[i] = di.raisedAmount / (currencyEx[diKey].NISEx);};
+            if (di.currencyID == 'CAD') {valueH[i] = di.raisedAmount / (currencyEx[diKey].CADEx);};
+            
+            valueH[i] = valueH[i] / (currencyEx[diKey].usdInflationRate)
         }
-       
-        var scaleX = d3.time.scale().domain([new Date(1993,0,1),new Date(2013,11,31)]).range([0,w]),
-            scaleY = d3.scale.log().domain([d3.min(valueH,function(d){return d}),d3.max(valueH,function(d){return d})]).range([h,0]);
+        
+        var min = d3.min(fundingRounds,function(d){return d.raisedAmount}),
+            max = d3.max(fundingRounds,function(d){return d.raisedAmount});
         
         var axisX = d3.svg.axis()
             .orient('bottom')
@@ -46,20 +52,45 @@ var queue = d3_queue.queue()
                 return v.getFullYear();
             });
         
+        var axisY= d3.svg.axis() 
+            .orient('left') 
+            .scale(scaleY)  
+            .ticks(4)   
+            .tickFormat(d3.format("s"));
+        
         plot.append('g')
             .attr('class','axis axis-x')
             .attr('transform','translate(0,'+h+')')
             .call(axisX);
         
+        plot.append('g')
+            .attr('class','axis axis-y')
+            .attr('transform','translate(0,0)')
+            .call(axisY);
+        
         var points = plot.selectAll('.point')
                     .data(fundingRounds)
                     .enter()
                     .append('circle').attr('class','point')
-                    .attr('cx',function(d){ return scaleX(d.fundingDate)})
-                    .attr('cy',function(d,i){ return h - scaleY(valueH[i])})
+                    .attr('cx',function(d,i){ 
+                        if (valueH[i] > min) {
+                            return scaleX(d.fundingDate);
+                        }else{
+                            return;
+                        }
+                    })
+                    .attr('cy',function(d,i){ 
+                        if (valueH[i] > min) {
+                            return scaleY(valueH[i]);
+                        }else{
+                            return;
+                        }
+                    })
                     .attr('r',2)
                     .style('fill',function(d){return color10(d.currencyID);})
-                    .style('fill-opacity',.5);
+                    .style('fill-opacity',.5)
+                    .on('mouseenter', onMouseEnter)
+                    .on('mouseleave', onMouseLeave);
     })
 
 function parse(d){
@@ -73,6 +104,7 @@ function parse(d){
         sourceURL: d.source_url,
         sourceDescription: d.source_description,
         fundingYear: +d.funded_year,
+        fundingMonth: +d.funded_month,
         fundingDate: parseDate(+d.funded_year, +d.funded_month, +d.funded_day),
         fundCcompanyID: d.companies,
         fundOrganizationID: d.organizations,
@@ -97,4 +129,96 @@ function parseEX(d){
 
 function parseDate(year, month, day){
     return new Date(year, month-1, day);
+}
+
+function onMouseEnter(d){
+  
+    var xy = d3.mouse(d3.select('.plot').node());
+    
+    var id = '', //string spacer
+        idHeight = 0,
+        gapTooltips = 0;
+    
+    if (d.fundCcompanyID != ''){ id = id + d.fundCcompanyID + ' ';} //initial '' is empty, ' ' represents spacer
+    if (d.fundOrganizationID != ''){ id = id + d.fundOrganizationID + ' ';}
+    if (d.fundPeopleID != ''){ id = id + d.fundPeopleID + ' ';}
+    
+    if (d.fundingRoundsID != ''){
+        d3.select('.custom-tooltip-fundingRoundsID')
+            .style('visibility','visible')
+            .style('left',(xy[0]+10)+'px')
+            .style('top',(xy[1]+10)+'px');
+        d3.select('.custom-tooltip-fundingRoundsID')
+            .select('h2')
+            .html(d.fundingRoundsID);
+        
+        gapTooltips += 1;
+    }
+    
+    if (id != ''){
+        console.log("1 "+d.fundCcompanyID+" 2 "+d.fundOrganizationID+" 3 "+d.fundPeopleID);
+        
+        d3.select('.custom-tooltip-id')
+            .attr('id','idTooltip')
+            .style('visibility','visible')
+            .style('left',(xy[0]+10)+'px')
+            .style('top',(xy[1]+10+(gapTooltips*20))+'px');
+        d3.select('.custom-tooltip-id')
+            .select('h2')
+            .html(id);
+        
+        idHeight = document.getElementById('idTooltip').offsetHeight - 8;
+    }
+    
+    d3.select('.custom-tooltip-raisedAmount')
+        .style('visibility','visible')
+        .style('left',(xy[0]+10)+'px')
+        .style('top',(xy[1]+10+(gapTooltips*20)+idHeight)+'px');
+    d3.select('.custom-tooltip-raisedAmount')
+        .select('h2')
+        .html(d.currencyID + " " + d.raisedAmount);
+    gapTooltips += 1;
+    
+//    d3.select('.custom-tooltip-raisedAmountUSD')
+//        .style('visibility','visible')
+//        .style('left',(xy[0]+10)+'px')
+//        .style('top',(xy[1]+10+(gapTooltips*20)+idHeight)+'px');
+//    d3.select('.custom-tooltip-raisedAmount')
+//        .select('h2')
+//        .html("USD " + d.raisedAmount);
+//    gapTooltips += 1;
+    
+    d3.select('.custom-tooltip-date')
+        .style('visibility','visible')
+        .style('left',(xy[0]+10)+'px')
+        .style('top',(xy[1]+10+(gapTooltips*20)+idHeight)+'px');
+    d3.select('.custom-tooltip-date')
+        .select('h2')
+        .html(d.fundingYear + "-" + d.fundingMonth);
+    gapTooltips += 1;
+
+//    if (d.sourceURL != ''){
+//        d3.select('.custom-tooltip-sourceURL')
+//            .style('visibility','visible')
+//            .style('left',(xy[0]+10)+'px')
+//            .style('top',(xy[1]+10+(gapTooltips*20))+'px');
+//        d3.select('.custom-tooltip-sourceURL')
+//            .select('h2')
+//            .html(d.sourceURL);
+//    }
+}
+
+function onMouseLeave(d){
+    d3.select('.custom-tooltip-fundingRoundsID')
+        .style('visibility','hidden');
+    d3.select('.custom-tooltip-id')
+        .style('visibility','hidden');
+    d3.select('.custom-tooltip-raisedAmount')
+        .style('visibility','hidden');
+    d3.select('.custom-tooltip-raisedAmountUSD')
+        .style('visibility','hidden');
+    d3.select('.custom-tooltip-date')
+        .style('visibility','hidden');
+//    d3.select('.custom-tooltip-sourceURL')
+//        .style('visibility','hidden');
 }
