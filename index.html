@@ -9,6 +9,26 @@
     </head>
     <body>
         <div class="container">
+            <div class="controls">
+                <!-- Buttons -->
+                <div class="btn-group pull-right">
+                    <a href="#" class="btn btn-primary lens" id="round">By Round</a>
+                    <a href="#" class="btn btn-primary lens" id="currency">By Currency</a>
+<!--
+                    <label class="btn btn-secondary active">
+                    <input type="radio" name="options" id="native" autocomplete="off" checked> In Native Currency
+                    </label>
+                    <label class="btn btn-secondary">
+                    <input type="radio" name="options" id="usd" autocomplete="off"> In USD Equivalent 2016
+                    </label>
+-->
+                    </div>
+                <div class="btn-group pull-right-secondary ">
+                    <a href="#" class="btn btn-secondary lens" id="NativeOY">In Native Currency Origin Year</a>
+                    <a href="#" class="btn btn-secondary lens" id="USDOY">In USD Equivalent Origin Year</a>
+                    <a href="#" class="btn btn-secondary lens" id="USD2016">In USD Equivalent 2016</a>
+                </div>
+            </div>
             <div class="plot" id="plot">
                 <div class="custom-tooltip-fundingRoundsID">
 					<h2></h2>
@@ -19,13 +39,13 @@
                 <div class="custom-tooltip-raisedAmount">
 					<h2></h2>
 				</div>
+                <div class="custom-tooltip-round">
+					<h2></h2>
+				</div>
                 <div class="custom-tooltip-raisedAmountUSD">
 					<h2></h2>
 				</div>
                 <div class="custom-tooltip-date">
-					<h2></h2>
-				</div>
-                <div class="custom-tooltip-sourceURL">
 					<h2></h2>
 				</div>
             </div>
@@ -39,6 +59,7 @@
 
         <script src="../lib/crossfilter/crossfilter.js"></script>
 
+        <script src="modules/DrawingPlots.js"></script>
         <script src="script.js"></script>
     </body>
 </html>

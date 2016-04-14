@@ -24,21 +24,23 @@ var queue = d3_queue.queue()
             scaleY = d3.scale.log().domain(d3.extent(fundingRounds,function(d){return d.raisedAmount})).range([h,0]);
         
         //Exchange
-        var valueH = [];
+        var valueUSDOY = [],
+            valueUSD2016 = [],
+            valueNative2016 = [];
         for (var i=0;i<fundingRounds.length;i++){
             
             var di = fundingRounds[i],
                 diKey = fundingRounds[i].fundingYear-1993;
             
-            if (di.currencyID == 'USD') {valueH[i] = di.raisedAmount;};
-            if (di.currencyID == 'JPY') {valueH[i] = di.raisedAmount / (currencyEx[diKey].JPYEx);};
-            if (di.currencyID == 'SEK') {valueH[i] = di.raisedAmount / (currencyEx[diKey].SEKEx);};
-            if (di.currencyID == 'GBP') {valueH[i] = di.raisedAmount / (currencyEx[diKey].GBPEx);};
-            if (di.currencyID == 'EUR') {valueH[i] = di.raisedAmount / (currencyEx[diKey].EUREx);};
-            if (di.currencyID == 'NIS') {valueH[i] = di.raisedAmount / (currencyEx[diKey].NISEx);};
-            if (di.currencyID == 'CAD') {valueH[i] = di.raisedAmount / (currencyEx[diKey].CADEx);};
+            if (di.currencyID == 'USD') {valueUSDOY[i] = di.raisedAmount;};
+            if (di.currencyID == 'JPY') {valueUSDOY[i] = di.raisedAmount / (currencyEx[diKey].JPYEx);};
+            if (di.currencyID == 'SEK') {valueUSDOY[i] = di.raisedAmount / (currencyEx[diKey].SEKEx);};
+            if (di.currencyID == 'GBP') {valueUSDOY[i] = di.raisedAmount / (currencyEx[diKey].GBPEx);};
+            if (di.currencyID == 'EUR') {valueUSDOY[i] = di.raisedAmount / (currencyEx[diKey].EUREx);};
+            if (di.currencyID == 'NIS') {valueUSDOY[i] = di.raisedAmount / (currencyEx[diKey].NISEx);};
+            if (di.currencyID == 'CAD') {valueUSDOY[i] = di.raisedAmount / (currencyEx[diKey].CADEx);};
             
-            valueH[i] = valueH[i] / (currencyEx[diKey].usdInflationRate)
+            valueUSD2016[i] = valueUSDOY[i] / (currencyEx[diKey].usdInflationRate)
         }
         
         var min = d3.min(fundingRounds,function(d){return d.raisedAmount}),
@@ -68,29 +70,79 @@ var queue = d3_queue.queue()
             .attr('transform','translate(0,0)')
             .call(axisY);
         
+        //Default: native currency in origin year
         var points = plot.selectAll('.point')
-                    .data(fundingRounds)
-                    .enter()
-                    .append('circle').attr('class','point')
-                    .attr('cx',function(d,i){ 
-                        if (valueH[i] > min) {
-                            return scaleX(d.fundingDate);
-                        }else{
-                            return;
-                        }
-                    })
-                    .attr('cy',function(d,i){ 
-                        if (valueH[i] > min) {
-                            return scaleY(valueH[i]);
-                        }else{
-                            return;
-                        }
-                    })
-                    .attr('r',2)
-                    .style('fill',function(d){return color10(d.currencyID);})
-                    .style('fill-opacity',.5)
-                    .on('mouseenter', onMouseEnter)
-                    .on('mouseleave', onMouseLeave);
+            .data(fundingRounds)
+            .enter()
+            .append('circle').attr('class','point')
+            .attr('cx',function(d){return scaleX(d.fundingDate);})
+            .attr('cy',function(d){return scaleY(d.raisedAmount);})
+            .attr('r',2)
+            .style('fill',function(d){return color10(d.currencyID);})
+            .style('fill-opacity',.5)
+            .on('mouseenter', onMouseEnter)
+            .on('mouseleave', onMouseLeave);
+        
+        //Set data
+        
+        //Reset to default
+        d3.select('#NativeOY').on('click',function(){
+            points.transition().duration(250)
+                .attr('cx',function(d){return scaleX(d.fundingDate);})
+                .attr('cy',function(d){return scaleY(d.raisedAmount);})
+        })
+        
+        //USDOY
+        d3.select('#USDOY').on('click',function(){
+            points.transition().duration(250)
+                .attr('cx',function(d,i){ 
+                    if (valueUSDOY[i] > min) {
+                        return scaleX(d.fundingDate);
+                    }else{
+                        return;
+                     }
+                })
+                .attr('cy',function(d,i){ 
+                    if (valueUSDOY[i] > min) {
+                        return scaleY(valueUSDOY[i]);
+                    }else{
+                        return;
+                    }
+                })
+        })
+        
+        //USD2016
+        d3.select('#USD2016').on('click',function(){
+            points.transition().duration(250)
+                .attr('cx',function(d,i){ 
+                    if (valueUSD2016[i] > min) {
+                        return scaleX(d.fundingDate);
+                    }else{
+                        return;
+                     }
+                })
+                .attr('cy',function(d,i){ 
+                    if (valueUSD2016[i] > min) {
+                        return scaleY(valueUSD2016[i]);
+                    }else{
+                        return;
+                    }
+                })
+        })
+        
+        //Set Color
+        
+        //Curreny
+        d3.select('#currency').on('click',function(){
+            points.transition().duration(250)
+                .style('fill',function(d){return color10(d.currencyID);})
+        })
+        
+        //Rounds
+        d3.select('#round').on('click',function(){
+            points.transition().duration(250)
+                .style('fill',function(d){return color20(d.roundCode);})
+        })
     })
 
 function parse(d){
@@ -179,6 +231,18 @@ function onMouseEnter(d){
         .html(d.currencyID + " " + d.raisedAmount);
     gapTooltips += 1;
     
+    if (d.roundCode != ''){
+        d3.select('.custom-tooltip-round')
+            .style('visibility','visible')
+            .style('left',(xy[0]+10)+'px')
+            .style('top',(xy[1]+10+(gapTooltips*20)+idHeight)+'px');
+        d3.select('.custom-tooltip-round')
+            .select('h2')
+            .html("Round " + d.roundCode);
+        
+        gapTooltips += 1;
+    }
+    
 //    d3.select('.custom-tooltip-raisedAmountUSD')
 //        .style('visibility','visible')
 //        .style('left',(xy[0]+10)+'px')
@@ -196,16 +260,6 @@ function onMouseEnter(d){
         .select('h2')
         .html(d.fundingYear + "-" + d.fundingMonth);
     gapTooltips += 1;
-
-//    if (d.sourceURL != ''){
-//        d3.select('.custom-tooltip-sourceURL')
-//            .style('visibility','visible')
-//            .style('left',(xy[0]+10)+'px')
-//            .style('top',(xy[1]+10+(gapTooltips*20))+'px');
-//        d3.select('.custom-tooltip-sourceURL')
-//            .select('h2')
-//            .html(d.sourceURL);
-//    }
 }
 
 function onMouseLeave(d){
@@ -214,6 +268,8 @@ function onMouseLeave(d){
     d3.select('.custom-tooltip-id')
         .style('visibility','hidden');
     d3.select('.custom-tooltip-raisedAmount')
+        .style('visibility','hidden');
+    d3.select('.custom-tooltip-round')
         .style('visibility','hidden');
     d3.select('.custom-tooltip-raisedAmountUSD')
         .style('visibility','hidden');
