@@ -83,66 +83,160 @@ var queue = d3_queue.queue()
             .on('mouseenter', onMouseEnter)
             .on('mouseleave', onMouseLeave);
         
-        //Set data
-        
-        //Reset to default
-        d3.select('#NativeOY').on('click',function(){
-            points.transition().duration(250)
-                .attr('cx',function(d){return scaleX(d.fundingDate);})
-                .attr('cy',function(d){return scaleY(d.raisedAmount);})
+        //Currency
+        $('.btn-secondary-currency').on('click',function(e){
+            e.preventDefault();
+            var number = $(this).data('num');
+            console.log(number);
+            if (number == 1) {
+                points.transition().duration(250)
+                    .attr('cx',function(d){return scaleX(d.fundingDate);})
+                    .attr('cy',function(d){return scaleY(d.raisedAmount);})
+                    .style('fill',function(d){return color10(d.currencyID);})
+            }else if (number == 2) {
+                points.transition().duration(250)
+                    .attr('cx',function(d,i){ 
+                        if (valueUSDOY[i] > min) {
+                            return scaleX(d.fundingDate);
+                        }else{
+                            return;
+                         }
+                    })
+                    .attr('cy',function(d,i){ 
+                        if (valueUSDOY[i] > min) {
+                            return scaleY(valueUSDOY[i]);
+                        }else{
+                            return;
+                        }
+                    })
+                    .style('fill',function(d){return color10(d.currencyID);})
+            }else if (number == 3) {
+                points.transition().duration(250)
+                    .attr('cx',function(d,i){ 
+                        if (valueUSD2016[i] > min) {
+                            return scaleX(d.fundingDate);
+                        }else{
+                            return;
+                         }
+                    })
+                    .attr('cy',function(d,i){ 
+                        if (valueUSD2016[i] > min) {
+                            return scaleY(valueUSD2016[i]);
+                        }else{
+                            return;
+                        }
+                    })
+                    .style('fill',function(d){return color10(d.currencyID);})
+            }
         })
         
-        //USDOY
-        d3.select('#USDOY').on('click',function(){
-            points.transition().duration(250)
-                .attr('cx',function(d,i){ 
-                    if (valueUSDOY[i] > min) {
-                        return scaleX(d.fundingDate);
-                    }else{
-                        return;
-                     }
-                })
-                .attr('cy',function(d,i){ 
-                    if (valueUSDOY[i] > min) {
-                        return scaleY(valueUSDOY[i]);
-                    }else{
-                        return;
-                    }
-                })
+        //Round
+        $('.btn-secondary-round').on('click',function(e){
+            e.preventDefault();
+            var number = $(this).data('num');
+            console.log(number);
+            if (number == 1) {
+                points.transition().duration(250)
+                    .attr('cx',function(d){return scaleX(d.fundingDate);})
+                    .attr('cy',function(d){return scaleY(d.raisedAmount);})
+                    .style('fill',function(d){return color20(d.roundCode);})
+            }else if (number == 2) {
+                points.transition().duration(250)
+                    .attr('cx',function(d,i){ 
+                        if (valueUSDOY[i] > min) {
+                            return scaleX(d.fundingDate);
+                        }else{
+                            return;
+                         }
+                    })
+                    .attr('cy',function(d,i){ 
+                        if (valueUSDOY[i] > min) {
+                            return scaleY(valueUSDOY[i]);
+                        }else{
+                            return;
+                        }
+                    })
+                    .style('fill',function(d){return color20(d.roundCode);})
+            }else if (number == 3) {
+                points.transition().duration(250)
+                    .attr('cx',function(d,i){ 
+                        if (valueUSD2016[i] > min) {
+                            return scaleX(d.fundingDate);
+                        }else{
+                            return;
+                         }
+                    })
+                    .attr('cy',function(d,i){ 
+                        if (valueUSD2016[i] > min) {
+                            return scaleY(valueUSD2016[i]);
+                        }else{
+                            return;
+                        }
+                    })
+                    .style('fill',function(d){return color20(d.roundCode);})
+            }
         })
         
-        //USD2016
-        d3.select('#USD2016').on('click',function(){
-            points.transition().duration(250)
-                .attr('cx',function(d,i){ 
-                    if (valueUSD2016[i] > min) {
-                        return scaleX(d.fundingDate);
-                    }else{
-                        return;
-                     }
-                })
-                .attr('cy',function(d,i){ 
-                    if (valueUSD2016[i] > min) {
-                        return scaleY(valueUSD2016[i]);
-                    }else{
-                        return;
-                    }
-                })
-        })
-        
-        //Set Color
-        
-        //Curreny
-        d3.select('#currency').on('click',function(){
-            points.transition().duration(250)
-                .style('fill',function(d){return color10(d.currencyID);})
-        })
-        
-        //Rounds
-        d3.select('#round').on('click',function(){
-            points.transition().duration(250)
-                .style('fill',function(d){return color20(d.roundCode);})
-        })
+//        //Set data
+//        
+//        //Reset to default
+//        d3.select('#NativeOY').on('click',function(){
+//            points.transition().duration(250)
+//                .attr('cx',function(d){return scaleX(d.fundingDate);})
+//                .attr('cy',function(d){return scaleY(d.raisedAmount);})
+//        })
+//        
+//        //USDOY
+//        d3.select('#USDOY').on('click',function(){
+//            points.transition().duration(250)
+//                .attr('cx',function(d,i){ 
+//                    if (valueUSDOY[i] > min) {
+//                        return scaleX(d.fundingDate);
+//                    }else{
+//                        return;
+//                     }
+//                })
+//                .attr('cy',function(d,i){ 
+//                    if (valueUSDOY[i] > min) {
+//                        return scaleY(valueUSDOY[i]);
+//                    }else{
+//                        return;
+//                    }
+//                })
+//        })
+//        
+//        //USD2016
+//        d3.select('#USD2016').on('click',function(){
+//            points.transition().duration(250)
+//                .attr('cx',function(d,i){ 
+//                    if (valueUSD2016[i] > min) {
+//                        return scaleX(d.fundingDate);
+//                    }else{
+//                        return;
+//                     }
+//                })
+//                .attr('cy',function(d,i){ 
+//                    if (valueUSD2016[i] > min) {
+//                        return scaleY(valueUSD2016[i]);
+//                    }else{
+//                        return;
+//                    }
+//                })
+//        })
+//        
+//        //Set Color
+//        
+//        //Curreny
+//        d3.select('#currency').on('click',function(){
+//            points.transition().duration(250)
+//                .style('fill',function(d){return color10(d.currencyID);})
+//        })
+//        
+//        //Rounds
+//        d3.select('#round').on('click',function(){
+//            points.transition().duration(250)
+//                .style('fill',function(d){return color20(d.roundCode);})
+//        })
     })
 
 function parse(d){

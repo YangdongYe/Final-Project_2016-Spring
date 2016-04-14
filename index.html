@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Visualizing Trips</title>
+        <title>Visualizing</title>
         <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css"/>
         <link rel="stylesheet" href="../global.css"/>
         <link rel="stylesheet" href="style.css"/>
@@ -10,23 +10,21 @@
     <body>
         <div class="container">
             <div class="controls">
-                <!-- Buttons -->
-                <div class="btn-group pull-right">
-                    <a href="#" class="btn btn-primary lens" id="round">By Round</a>
-                    <a href="#" class="btn btn-primary lens" id="currency">By Currency</a>
-<!--
-                    <label class="btn btn-secondary active">
-                    <input type="radio" name="options" id="native" autocomplete="off" checked> In Native Currency
-                    </label>
-                    <label class="btn btn-secondary">
-                    <input type="radio" name="options" id="usd" autocomplete="off"> In USD Equivalent 2016
-                    </label>
--->
-                    </div>
-                <div class="btn-group pull-right-secondary ">
-                    <a href="#" class="btn btn-secondary lens" id="NativeOY">In Native Currency Origin Year</a>
-                    <a href="#" class="btn btn-secondary lens" id="USDOY">In USD Equivalent Origin Year</a>
-                    <a href="#" class="btn btn-secondary lens" id="USD2016">In USD Equivalent 2016</a>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary lens-currency" data-toggle="dropdown" aria-expanded="false">Currency  <span class="caret"></span></button>
+                    <ul class="dropdown-menu" role="menu">
+                         <li><a href="#" class="btn-secondary-currency" data-num=1>In Native Currency Origin Year</a></li>
+                         <li><a href="#" class="btn-secondary-currency" data-num=2>In USD Equivalent Origin Year</a></li>
+                         <li><a href="#" class="btn-secondary-currency" data-num=3>In USD Equivalent 2016</a></li>
+                    </ul>
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary lens-round" data-toggle="dropdown" aria-expanded="false">Round  <span class="caret"></span></button>
+                    <ul class="dropdown-menu" role="menu">
+                         <li><a href="#" class="btn-secondary-round" data-num=1>In Native Currency Origin Year</a></li>
+                         <li><a href="#" class="btn-secondary-round" data-num=2>In USD Equivalent Origin Year</a></li>
+                         <li><a href="#" class="btn-secondary-round" data-num=3>In USD Equivalent 2016</a></li>
+                    </ul>
                 </div>
             </div>
             <div class="plot" id="plot">
