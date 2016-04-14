@@ -10,8 +10,11 @@
     <body>
         <div class="container">
             <div class="controls">
+                
+                <!-- script.js -->
+<!--
                 <div class="btn-group">
-                    <button type="button" class="btn btn-primary lens-currency" data-toggle="dropdown" aria-expanded="false">Currency  <span class="caret"></span></button>
+                    <button type="button" class="btn btn-primary lens-currency" data-toggle="dropdown" aria-expanded="false">By Currency  <span class="caret"></span></button>
                     <ul class="dropdown-menu" role="menu">
                          <li><a href="#" class="btn-secondary-currency" data-num=1>In Native Currency Origin Year</a></li>
                          <li><a href="#" class="btn-secondary-currency" data-num=2>In USD Equivalent Origin Year</a></li>
@@ -19,12 +22,21 @@
                     </ul>
                 </div>
                 <div class="btn-group">
-                    <button type="button" class="btn btn-primary lens-round" data-toggle="dropdown" aria-expanded="false">Round  <span class="caret"></span></button>
+                    <button type="button" class="btn btn-primary lens-round" data-toggle="dropdown" aria-expanded="false">By Round  <span class="caret"></span></button>
                     <ul class="dropdown-menu" role="menu">
                          <li><a href="#" class="btn-secondary-round" data-num=1>In Native Currency Origin Year</a></li>
                          <li><a href="#" class="btn-secondary-round" data-num=2>In USD Equivalent Origin Year</a></li>
                          <li><a href="#" class="btn-secondary-round" data-num=3>In USD Equivalent 2016</a></li>
                     </ul>
+                </div>
+-->
+                
+                <!-- script-2.js -->
+                <select class="year-list">
+                </select>
+                <div class="btn-group pull-right">
+                    <a href="#" class="btn btn-primary interval" id="currency">By Currency</a>
+                    <a href="#" class="btn btn-primary interval" id="round">By Round</a>
                 </div>
             </div>
             <div class="plot" id="plot">
@@ -58,6 +70,6 @@
         <script src="../lib/crossfilter/crossfilter.js"></script>
 
         <script src="modules/DrawingPlots.js"></script>
-        <script src="script.js"></script>
+        <script src="../scripts/script-2.js"></script>
     </body>
 </html>
