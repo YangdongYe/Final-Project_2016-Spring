@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>The Startup Scene</title>
+        <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="../global.css"/>
+        <link rel="stylesheet" href="../style.css"/>
+    </head>
+
+
+    <body>
+
+        <div class ="text1"><h1>The Startup Scene</h2><p>This project visualized reported investments and funding data between 1993 and 2013, according to the crunchbase dataset. Visualized by round and by currency, we see a proliferation of angel and seed investment after a bleak period following the recession. A large number of start-ups have kickstarted a culture of disruptive innovation.</p></div>
+        <div class="container">
+        <div class ="text2"> <h3> How much money has been invested over time?</h3>Investments visibly slowed down after the 2008 recession. Soon after, a new trend errupted, as seen from a high volume of low-value seed fundings. Investors started backing and betting on several new, innovative and disruptive technologies that they would hope would return a high ROI on an average-sized investment. </div>
+        <div class="controls">
+            <!-- DropDown List for currency and year combination -->
+            <!-- Data -->
+            <select class="currency-year">
+            </select>
+            <!-- Buttons -->
+            <div class="btn-group pull-right">
+                <!-- Color -->
+                <a href="#" class="btn btn-primary lens" id="round">By Round</a>
+                <a href="#" class="btn btn-primary lens" id="currency">By Currency</a>
+            </div>  
+            <div class="plot1" id="tooltip">
+                <div class="custom-tooltip-fundingRoundsID">
+					<h2></h2>
+				</div>
+                <div class="custom-tooltip-id">
+					<h2></h2>
+				</div>
+                <div class="custom-tooltip-id1">
+					<h2></h2>
+				</div>
+                <div class="custom-tooltip-raisedAmount">
+					<h2></h2>
+				</div>
+                <div class="custom-tooltip-round">
+					<h2></h2>
+				</div>
+                <div class="custom-tooltip-raisedAmountUSD">
+					<h2></h2>
+				</div>
+                <div class="custom-tooltip-date">
+					<h2></h2>
+				</div>
+        </div> 
+        </div>
+        <div class="plot" id="currencyNative" ></div>
+        <div class="plot" id="timeSeriesChart" ></div>
+
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script src="https://d3js.org/d3-queue.v2.min.js"></script>
+
+        <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+        <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+
+        <script src="../lib/crossfilter/crossfilter.js"></script>
+        <script src="../modules/scatterplot.js"></script>
+        <script src="../modules/timeseries.js"></script>
+
+        <script src="../script.js"></script>
+    </body>
+</html>
